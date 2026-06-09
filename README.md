@@ -1,12 +1,12 @@
 # kimchi
 
-A coding agent CLI powered by [kimchi](https://kimchi.dev/). Built on the [pi-mono](https://github.com/badlogic/pi-mono) coding agent SDK, kimchi gives you an AI-powered development assistant in your terminal that connects to kimchi's LLM infrastructure.
+CLI кодинг-агент на базе [kimchi](https://kimchi.dev/). Построенный на базе SDK [pi-mono](https://github.com/badlogic/pi-mono), kimchi предоставляет вам интеллектуального помощника для разработки прямо в терминале, подключенного к инфраструктуре LLM от kimchi.
 
 ![kimchi](./kimchi.png)
 
-## Quick start
+## Быстрый старт
 
-Install the latest release:
+Установите последнюю версию:
 
 **Homebrew (macOS / Linux):**
 
@@ -14,41 +14,41 @@ Install the latest release:
 brew install getkimchi/tap/kimchi
 ```
 
-**Install script:**
+**Скрипт установки:**
 
 ```bash
 curl -fsSL https://github.com/getkimchi/kimchi/releases/latest/download/install.sh | bash
 ```
 
-Then configure your API key and launch:
+Затем настройте ваш API-ключ и запустите:
 
 ```bash
-kimchi setup   # one-time interactive setup
-kimchi         # launch the coding agent
+kimchi setup   # однократная интерактивная настройка
+kimchi         # запуск кодинг-агента
 ```
 
-Run `kimchi --help` to see all available subcommands and flags.
+Выполните `kimchi --help`, чтобы увидеть все доступные подкоманды и флаги.
 
-## Models
+## Модели
 
-### Model selection
+### Выбор модели
 
-The supported model list is fetched at startup from the kimchi metadata service. Use `/model` or `ctrl+p` in the interactive CLI to switch between available models.
+Список поддерживаемых моделей загружается при запуске из сервиса метаданных kimchi. Используйте `/model` или `ctrl+p` в интерактивном CLI для переключения между доступными моделями.
 
-Kimchi operates in one of two modes:
+Kimchi работает в одном из двух режимов:
 
-| Mode | Footer indicator | Behavior |
-|------|-----------------|----------|
-| **Multi-model** | `multi-model (orchestrator-id)` | The orchestrator delegates each task to the model assigned for that role |
-| **Single-model** | model name | All work runs on the selected model directly |
+| Режим | Индикатор в футере | Поведение |
+|-------|-------------------|-----------|
+| **Multi-model** | `multi-model (orchestrator-id)` | Оркестратор делегирует каждую подзадачу модели, назначенной на соответствующую роль |
+| **Single-model** | название модели | Вся работа выполняется выбранной моделью напрямую |
 
-Use `ctrl+p` to cycle through models. The last entry in the cycle is `multi-model`. You can also open the `/model` picker and select a specific model or `multi-model` from the list.
+Используйте `ctrl+p` для циклического переключения моделей. Последний пункт в цикле — `multi-model`. Вы также можете открыть окно выбора `/model` и выбрать конкретную модель или `multi-model` из списка.
 
-In single-model mode the orchestration system prompt (environment, tools, research rules, guidelines, phase tagging) stays active, but task classification and delegation are disabled. The subagent tool remains available if you explicitly ask the agent to delegate.
+В режиме одной модели (single-model) системный промпт оркестрации (окружение, инструменты, правила исследования, рекомендации, теги фаз) остается активным, но классификация задач и делегирование отключены. Инструмент субагента остается доступным, если вы явно попросите агента делегировать задачу.
 
-### Model roles
+### Роли моделей
 
-In multi-model mode, each task type is handled by a specific role. Use `/multi-model` in the interactive CLI to assign models to roles, or edit `~/.config/kimchi/harness/settings.json` directly:
+В многомодельном режиме (multi-model) каждый тип задачи обрабатывается определенной ролью. Используйте `/multi-model` в интерактивном CLI, чтобы назначить модели ролям, или отредактируйте файл `~/.config/kimchi/harness/settings.json` напрямую:
 
 ```json
 {
@@ -62,306 +62,307 @@ In multi-model mode, each task type is handled by a specific role. Use `/multi-m
 }
 ```
 
-| Role | Default | Description |
-|------|---------|-------------|
-| **orchestrator** | `kimchi-dev/kimi-k2.6` | Runs the main loop, delegates work to other roles |
-| **planner** | `kimchi-dev/kimi-k2.6` | Designs the approach, writes specs. When set to the same model as orchestrator, planning is done in-process |
-| **builder** | `kimchi-dev/minimax-m2.7` | Code implementation, refactoring |
-| **reviewer** | `kimchi-dev/minimax-m2.7` | Code review, finding bugs, verifying correctness |
-| **explorer** | `kimchi-dev/nemotron-3-super-fp4` | Codebase exploration, reading files, tracing architecture, research |
+| Роль | По умолчанию | Описание |
+|------|--------------|----------|
+| **orchestrator** | `kimchi-dev/kimi-k2.6` | Запускает основной цикл, делегирует работу другим ролям |
+| **planner** | `kimchi-dev/kimi-k2.6` | Проектирует подход, пишет спецификации. Если совпадает с оркестратором, планирование выполняется в том же процессе |
+| **builder** | `kimchi-dev/minimax-m2.7` | Реализация кода, рефакторинг |
+| **reviewer** | `kimchi-dev/minimax-m2.7` | Ревью кода, поиск багов, проверка корректности |
+| **explorer** | `kimchi-dev/nemotron-3-super-fp4` | Исследование кодовой базы, чтение файлов, трассировка архитектуры |
 
-Roles accept any `provider/model-id` string — kimchi-dev models, or models from other providers configured in `models.json` (e.g. `anthropic/claude-sonnet-4-5`, `openai/gpt-4o`). Only non-default values need to be specified; missing keys fall back to the defaults above.
+Роли принимают любую строку формата `provider/model-id` — модели kimchi-dev или модели от других провайдеров, настроенных в `models.json` (например, `anthropic/claude-sonnet-4-5`, `openai/gpt-4o`). Нужно указывать только значения, отличные от значений по умолчанию; отсутствующие ключи будут использовать значения по умолчанию, указанные выше.
 
-### Phase tracking
+### Отслеживание фаз
 
-Kimchi tags every LLM request with a `phase:{name}` label for usage analytics and cost attribution. The orchestrator sets the phase as work progresses and it is displayed in the footer.
+Kimchi помечает каждый запрос к LLM меткой `phase:{name}` для аналитики использования и учета затрат. Оркестратор устанавливает фазу по мере продвижения работы, и она отображается в футере.
 
-| Phase | Description |
-|-------|-------------|
-| `explore` | Navigating the codebase, reading files to understand structure |
-| `plan` | Designing, breaking down tasks, writing specs |
-| `build` | Writing, modifying, or refactoring code |
-| `review` | Analyzing output, verifying correctness |
-| `research` | Investigating documentation, researching issues |
+| Фаза | Описание |
+|------|----------|
+| `explore` | Навигация по кодовой базе, чтение файлов для понимания структуры |
+| `plan` | Проектирование, декомпозиция задач, написание спецификаций |
+| `build` | Написание, модификация или рефакторинг кода |
+| `review` | Анализ результатов, проверка корректности |
+| `research` | Изучение документации, исследование проблем |
 
-Subagents inherit the current phase from the orchestrator but cannot change it.
+Субагенты наследуют текущую фазу от оркестратора, но не могут ее изменить.
 
-## Tags
+## Теги
 
-Kimchi supports tagging LLM requests for usage tracking and cost attribution. Tags are included with every request and displayed in the footer, grouped by key with color coding.
+Kimchi поддерживает тегирование запросов к LLM для отслеживания использования и учета затрат. Теги включаются в каждый запрос и отображаются в футере, сгруппированные по ключам с цветовой кодировкой.
 
-### Commands
+### Команды
 
-| Command | Description |
-|---------|-------------|
-| `/tags` | List all active tags |
-| `/tags add key:value ...` | Add one or more tags (e.g., `/tags add project:myapp team:backend`) |
-| `/tags remove tag ...` | Remove one or more user-defined tags |
-| `/tags clear` | Remove all user-defined tags |
+| Команда | Описание |
+|---------|----------|
+| `/tags` | Список всех активных тегов |
+| `/tags add key:value ...` | Добавить один или несколько тегов (например, `/tags add project:myapp team:backend`) |
+| `/tags remove tag ...` | Удалить один или несколько пользовательских тегов |
+| `/tags clear` | Удалить все пользовательские теги |
 
-### Tag format
+### Формат тегов
 
-Tags use `key:value` format. Key and value must start and end with alphanumeric characters (middle characters may include `-`, `_`, `.`), each 64 characters max, 10 tags total.
+Теги используют формат `key:value`. Ключ и значение должны начинаться и заканчиваться буквенно-цифровыми символами (в середине могут быть `-`, `_`, `.`), максимум 64 символа каждый, всего до 10 тегов.
 
-### Static tags
+### Статические теги
 
-Set via the `KIMCHI_TAGS` environment variable (comma-separated). Static tags are read-only within the session and shown with a `[static]` marker.
+Устанавливаются через переменную окружения `KIMCHI_TAGS` (через запятую). Статические теги доступны только для чтения внутри сессии и помечаются маркером `[static]`.
 
 ```bash
 export KIMCHI_TAGS="team:backend,project:api"
 ```
 
-### Auto-tags
+### Авто-теги
 
-Two tags are added automatically to every request and do not count toward the 10 tag limit:
+Два тега добавляются автоматически к каждому запросу и не учитываются в лимите из 10 тегов:
 
-- `model:{model_id}` -- the model handling the request
-- `phase:{phase}` -- the current work phase
+- `model:{model_id}` — модель, обрабатывающая запрос
+- `phase:{phase}` — текущая фаза работы
 
-### Persistence
+### Сохранение
 
-User-defined tags (added via `/tags add`) are persisted to `~/.config/kimchi/tags.json` and survive across sessions. Static tags from `KIMCHI_TAGS` must be set each session.
+Пользовательские теги (добавленные через `/tags add`) сохраняются в `~/.config/kimchi/tags.json` и доступны в новых сессиях. Статические теги из `KIMCHI_TAGS` должны устанавливаться каждую сессию.
 
-## Ferment -- cross-session project management
+## Ferment — управление проектами между сессиями
 
-Ferment is Kimchi's progressive-refinement project mode for multi-session work. Instead of starting from scratch each chat, Ferment persists a structured plan (goal, phases, steps) as a JSON state file.
+Ferment — это режим проектов Kimchi для поэтапной работы в течение нескольких сессий. Вместо того чтобы начинать каждый чат с нуля, Ferment сохраняет структурированный план (цель, фазы, шаги) в виде файла состояния JSON.
 
-### Quick start
+### Быстрый старт
 
 ```bash
-kimchi --ferment "Build Tetris"
+kimchi --ferment "Собрать Тетрис"
 ```
 
-Or inside an active session:
+Или внутри активной сессии:
 
 ```
-/ferment new "Build Tetris"    # create a ferment
-/ferment auto                   # keep going until done or blocked
+/ferment new "Собрать Тетрис"    # создать новый проект ferment
+/ferment auto                   # продолжать до завершения или блокировки
 ```
 
-### Concepts
+### Концепции
 
-- **Ferment** -- the top-level project (e.g. "Build Tetris", "Auth rewrite")
-- **Phase** -- a milestone within the project (e.g. "Canvas & Grid", "Movement")
-- **Step** -- a single executable task within a phase (e.g. "Create index.html")
-- **Decision** -- an architectural choice recorded for posterity
-- **Memory** -- a gotcha, convention, or pattern encountered during work
+- **Ferment** — проект верхнего уровня (например, "Собрать Тетрис", "Переписать Auth")
+- **Phase (Фаза)** — веха внутри проекта (например, "Canvas и сетка", "Движение")
+- **Step (Шаг)** — отдельная исполняемая задача внутри фазы (например, "Создать index.html")
+- **Decision (Решение)** — архитектурный выбор, записанный для потомков
+- **Memory (Память)** — важные замечания, соглашения или паттерны, обнаруженные в ходе работы
 
-### State machine
+### Машина состояний
 
-All lifecycle transitions are validated by a deterministic finite state machine that enforces valid state changes and prevents illegal operations (e.g. completing a step before it starts, skipping an already-completed phase).
+Все переходы жизненного цикла проверяются детерминированной машиной состояний, которая обеспечивает валидность изменений и предотвращает недопустимые операции (например, завершение шага до его начала).
 
 ```
 draft -> planned -> running -> [paused] -> complete
 ```
 
-1. **draft** -- created via `/ferment new`, agent collects goal and phases conversationally
-2. **planned** -- `scope_ferment` sets goal, criteria, constraints, phase breakdown
-3. **running** -- `activate_ferment_phase` starts a phase, agent executes steps
-4. **paused** -- user intervention required, or paused with `/ferment pause`
-5. **complete** -- all phases terminal
+1. **draft (черновик)** — создан через `/ferment new`, агент собирает цели и фазы в ходе диалога.
+2. **planned (спланировано)** — `scope_ferment` устанавливает цель, критерии, ограничения и разбивку по фазам.
+3. **running (в процессе)** — `activate_ferment_phase` запускает фазу, агент выполняет шаги.
+4. **paused (на паузе)** — требуется вмешательство пользователя или проект приостановлен командой `/ferment pause`.
+5. **complete (завершено)** — все фазы закончены.
 
-### Continuation policy
+### Политика продолжения
 
-Controls whether the active ferment advances across phase boundaries.
+Управляет тем, переходит ли активный проект ferment через границы фаз автоматически.
 
-| Policy | Behavior | Command |
-|--------|----------|---------|
-| **manual** | Ask before moving to the next phase | `/ferment manual` |
-| **automated** | Keep going until complete, blocked, paused, or user input is needed | `/ferment auto` |
+| Политика | Поведение | Команда |
+|----------|-----------|---------|
+| **manual** | Спрашивать перед переходом к следующей фазе | `/ferment manual` |
+| **automated** | Продолжать до завершения, блокировки или необходимости ввода от пользователя | `/ferment auto` |
 
-Pause/resume is separate: `/ferment pause` stops the ferment, `/ferment resume` continues it using the current policy. `/ferment exit` leaves Ferment mode without deleting or abandoning the ferment; planned/running work is paused first, active Ferment UI/tools are cleared, and you can later select it from `/ferment list` or `/ferment switch`.
+Пауза и возобновление работают отдельно: `/ferment pause` останавливает проект, `/ferment resume` продолжает его с использованием текущей политики. `/ferment exit` выходит из режима Ferment без удаления проекта; работа приостанавливается, интерфейс Ferment очищается, и позже вы сможете выбрать проект через `/ferment list` или `/ferment switch`.
 
-### Commands
+### Команды
 
-| Command | Description |
-|---------|-------------|
-| `/ferment` | Start a new ferment via prompt |
-| `/ferment new "Name"` | Create new ferment |
-| `/ferment switch <id>` | Resume by ID prefix or name |
-| `/ferment delete <id>` | Delete permanently |
-| `/ferment export` | Export stats to JSON |
-| `/ferment progress` | Open phase/step navigator overlay |
-| `/ferment manual` | Set manual continuation policy |
-| `/ferment auto` | Set automated continuation policy |
-| `/ferment pause` | Pause the active ferment lifecycle |
-| `/ferment resume` | Resume the active ferment lifecycle |
-| `/ferment exit` | Leave Ferment mode without deleting the ferment |
+| Команда | Описание |
+|---------|----------|
+| `/ferment` | Запустить новый проект ferment через промпт |
+| `/ferment new "Имя"` | Создать новый проект ferment |
+| `/ferment switch <id>` | Переключиться на проект по префиксу ID или имени |
+| `/ferment delete <id>` | Удалить навсегда |
+| `/ferment export` | Экспортировать статистику в JSON |
+| `/ferment progress` | Открыть оверлей навигации по фазам/шагам |
+| `/ferment manual` | Установить ручную политику продолжения |
+| `/ferment auto` | Установить автоматическую политику продолжения |
+| `/ferment pause` | Приостановить жизненный цикл активного проекта |
+| `/ferment resume` | Возобновить жизненный цикл активного проекта |
+| `/ferment exit` | Выйти из режима Ferment без удаления проекта |
 
-### Recovery
+### Восстановление
 
-Every session writes a `ferment_reference` entry in the session log. On next start, the harness reads this entry and resumes from the exact state.
+Каждая сессия записывает запись `ferment_reference` в лог сессии. При следующем запуске оболочка считывает эту запись и возобновляет работу из точного состояния.
 
 ```bash
-# Day 1
-$ kimchi --ferment "Build Tetris"
-# ... agent works, crashes, terminal closes ...
+# День 1
+$ kimchi --ferment "Собрать Тетрис"
+# ... агент работает, происходит сбой или терминал закрывается ...
 
-# Day 2
-$ kimchi --ferment "Build Tetris"
-# -> Rehydrates state, continues Phase 2 exactly where it left off
+# День 2
+$ kimchi --ferment "Собрать Тетрис"
+# -> Восстанавливает состояние и продолжает Фазу 2 ровно с того места, где остановился
 ```
 
-### Where state lives
+### Где хранятся данные
 
 ```
 .kimchi/
   ferments/
-    <uuid>.json          -- snapshot (machine-readable plan state)
-    <uuid>.events.jsonl  -- append-only audit log of every transition
+    <uuid>.json          -- снепшот (состояние плана, читаемое машиной)
+    <uuid>.events.jsonl  -- лог событий всех переходов (только для добавления)
   sessions/
-    <timestamp>.jsonl    -- chat history + tool calls
+    <timestamp>.jsonl    -- история чата + вызовы инструментов
 ```
 
-Every mutation is persisted as an append-only event with pre/post state hashes, enabling full auditability. Stats (phase/step counts, timing, model usage, grade distributions) are computed on demand from the snapshot and exported via `/ferment export`.
+Каждое изменение сохраняется как событие в логе с хешами состояния «до» и «после», что обеспечивает полную аудируемость. Статистика вычисляется по запросу из снепшота и экспортируется через `/ferment export`.
 
-For full documentation see `docs/ferment.md` and `docs/ferment-storage-schema.md`.
+Полную документацию см. в `docs/ferment.md` и `docs/ferment-storage-schema.md`.
 
-## Remote teleport (preview)
+## Удаленный доступ Teleport (предварительная версия)
 
-Launch with `kimchi --teleport` to enable session-multiplex commands. The local TUI stays the home base; remote workers are spawned, detached, and re-attached without restarting kimchi.
+Запустите с флагом `kimchi --teleport`, чтобы включить команды мультиплексирования сессий. Локальный TUI остается основной базой; удаленные воркеры создаются, отключаются и подключаются заново без перезапуска kimchi.
 
 ```bash
 kimchi --teleport
 ```
 
-Slash commands available inside the TUI:
+Слэш-команды, доступные внутри TUI:
 
-| Command | Description |
-|---------|-------------|
-| `/teleport [name] [flags]` | Rsync the working tree to a fresh remote sandbox and foreground it. Flags: `--allow-dirty`, `--exclude <glob>`, `--include-ignored`, `--abandon-pending`, `--force` |
-| `/detach [--abandon-pending]` | Drop the WebSocket to the foreground remote and return to the local home base. The server keeps the session running. |
-| `/attach <name-or-id>` | Re-attach to a previously detached remote |
-| `/sessions` | List everything: foreground remote, detached remotes, server-side sessions |
-| `/connect [name-or-id]` | Open an interactive SSH shell on the sandbox via the teleport proxy |
+| Команда | Описание |
+|---------|----------|
+| `/teleport [имя] [флаги]` | Синхронизировать рабочее дерево с новой удаленной песочницей и переключиться на нее. Флаги: `--allow-dirty`, `--exclude <glob>`, `--include-ignored`, `--abandon-pending`, `--force` |
+| `/detach [--abandon-pending]` | Разорвать WebSocket-соединение с удаленной машиной и вернуться в локальную базу. Сервер продолжит выполнение сессии. |
+| `/detach [--abandon-pending]` | Разорвать WebSocket-соединение с удаленной машиной и вернуться в локальную базу. Сервер продолжит выполнение сессии. |
+| `/attach <имя-или-id>` | Подключиться заново к ранее отключенной удаленной машине |
+| `/sessions` | Список всего: активная удаленная машина, отключенные машины, серверные сессии |
+| `/connect [имя-или-id]` | Открыть интерактивную SSH-оболочку в песочнице через прокси teleport |
 
-`--teleport` and `--remote` are mutually exclusive. Use `--remote --session <id>` to attach to a single remote at startup; use `--teleport` to multiplex from a local home base.
+`--teleport` и `--remote` являются взаимоисключающими. Используйте `--remote --session <id>` для подключения к одной удаленной машине при запуске; используйте `--teleport` для мультиплексирования из локальной базы.
 
-## Configuration
+## Конфигурация
 
-### Authentication
+### Аутентификация
 
-The API key is resolved in this order:
+API-ключ определяется в следующем порядке:
 
-1. `KIMCHI_API_KEY` environment variable (takes precedence)
-2. `~/.config/kimchi/config.json` field `api_key`
+1. Переменная окружения `KIMCHI_API_KEY` (имеет приоритет)
+2. Файл `~/.config/kimchi/config.json`, поле `api_key`
 
-Run `kimchi setup` for an interactive first-time configuration.
+Запустите `kimchi setup` для интерактивной первоначальной настройки.
 
-### Agent config
+### Конфигурация агента
 
-Kimchi stores its configuration (settings, sessions, models) under:
+Kimchi хранит свои настройки, сессии и модели в директории:
 
 ```
 ~/.config/kimchi/harness/
 ```
 
-### Packages
+### Пакеты
 
-Kimchi supports native Pi packages. `kimchi install npm:<package>` installs a package only for Kimchi, while `pi install npm:<package>` keeps the package owned by the original Pi harness. Kimchi can also load original Pi packages through the **Pi package lookup** resource, so both CLIs can use Pi packages without sharing Kimchi's install scope.
+Kimchi поддерживает нативные пакеты Pi. Команда `kimchi install npm:<package>` устанавливает пакет только для Kimchi, в то время как `pi install npm:<package>` оставляет пакет в ведении оригинальной оболочки Pi. Kimchi также может загружать оригинальные пакеты Pi через ресурс **Pi package lookup**, так что обе CLI могут использовать пакеты Pi, не разделяя область установки Kimchi.
 
-If the same package is installed in both places, the Kimchi install wins. Disable original Pi package lookup with:
+Если один и тот же пакет установлен в обоих местах, приоритет имеет версия Kimchi. Отключить поиск оригинальных пакетов Pi можно командой:
 
 ```bash
 kimchi resources disable extensions.pi-package-lookup
 ```
 
-Update packages with:
+Обновление пакетов:
 
 ```bash
-kimchi update                  # update installed packages, then Kimchi itself
-kimchi update --extensions     # update installed packages only
-kimchi update context-mode     # update one package by source or display name
-kimchi update self             # update Kimchi itself only
+kimchi update                  # обновить установленные пакеты, а затем сам Kimchi
+kimchi update --extensions     # обновить только установленные пакеты
+kimchi update context-mode     # обновить один пакет по источнику или отображаемому имени
+kimchi update self             # обновить только сам Kimchi
 ```
 
-### HTTP proxy
+### HTTP-прокси
 
-Kimchi respects `HTTP_PROXY` / `HTTPS_PROXY` environment variables for network requests.
+Kimchi учитывает переменные окружения `HTTP_PROXY` / `HTTPS_PROXY` для сетевых запросов.
 
-### Token optimization (RTK)
+### Оптимизация токенов (RTK)
 
-Kimchi installs [RTK](https://github.com/rtk-ai/rtk) during setup and keeps the `rtk` command available on startup. When enabled, kimchi rewrites bash tool calls through `rtk rewrite` before execution. This compresses command output (git, cargo, npm, docker, etc.) by 60-90%, reducing LLM context usage.
+Kimchi устанавливает [RTK](https://github.com/rtk-ai/rtk) во время настройки и поддерживает доступность команды `rtk` при запуске. При включении этой функции kimchi переписывает вызовы инструментов bash через `rtk rewrite` перед выполнением. Это сжимает вывод команд (git, cargo, npm, docker и т. д.) на 60–90%, снижая использование контекста LLM.
 
-Before every bash tool execution, kimchi calls `rtk rewrite "<command>"`. If RTK returns a rewritten command (e.g. `git status` becomes `rtk git status`), the rewritten version is executed instead.
+Перед каждым выполнением инструмента bash kimchi вызывает `rtk rewrite "<command>"`. Если RTK возвращает переписанную команду (например, `git status` превращается в `rtk git status`), выполняется именно переписанная версия.
 
 ```bash
 brew install rtk    # macOS / Linux
 ```
 
-RTK rewrite is managed from resources:
+Управление RTK rewrite осуществляется через ресурсы:
 
 ```bash
 kimchi resources disable hooks.rtk-rewrite
 kimchi resources enable hooks.rtk-rewrite
 ```
 
-### Hooks
+### Хуки (Hooks)
 
-Users can add custom Bash hooks to rewrite or block shell commands before they run. Global hooks live in `~/.config/kimchi/harness/hooks/bash/`; project hooks live in `.kimchi/hooks/bash/` and default to disabled until enabled from `/resources` or `kimchi resources enable ...`.
+Пользователи могут добавлять кастомные Bash-хуки для переписывания или блокировки команд оболочки перед их выполнением. Глобальные хуки находятся в `~/.config/kimchi/harness/hooks/bash/`; хуки проекта — в `.kimchi/hooks/bash/` (по умолчанию отключены, пока не будут включены через `/resources` или `kimchi resources enable ...`).
 
-See `docs/hooks.md` for the hook protocol and examples.
+См. `docs/hooks.md` для описания протокола хуков и примеров.
 
-### Migrating from another coding agent
+### Миграция с других кодинг-агентов
 
-On first run, kimchi looks for an existing **Claude Code** or **OpenCode** installation and offers to migrate its MCP servers. If anything is migratable you will see a one-shot prompt:
+При первом запуске kimchi ищет установленные **Claude Code** или **OpenCode** и предлагает мигрировать их MCP-серверы. Если миграция возможна, вы увидите запрос:
 
 ```
-+  Claude Code + OpenCode configuration found
++  Найдена конфигурация Claude Code / OpenCode
 |
-|  MCP servers: filesystem, github, ripgrep
-|  Claude Code skills: 4 in ~/.claude/skills
-|  OpenCode skills: 2 in ~/.config/opencode/skills
+|  MCP-серверы: filesystem, github, ripgrep
+|  Навыки Claude Code: 4 в ~/.claude/skills
+|  Навыки OpenCode: 2 в ~/.config/opencode/skills
 |
-*  Migrate MCP servers to Kimchi?
-|  * Migrate now
-|  * Skip this time
-|  * Never ask again
+*  Мигрировать MCP-серверы в Kimchi?
+|  * Мигрировать сейчас
+|  * Пропустить в этот раз
+|  * Больше не спрашивать
 ```
 
-Discovered MCP servers are merged into `~/.config/kimchi/harness/mcp.json`. Existing Kimchi entries always win on name collisions, so re-running the migration is safe.
+Обнаруженные MCP-серверы объединяются в `~/.config/kimchi/harness/mcp.json`. При конфликтах имен записи Kimchi всегда имеют приоритет, поэтому повторный запуск миграции безопасен.
 
-The prompt is only shown when something is actually worth migrating. If neither agent is installed or both are empty, the wizard skips silently.
+Запрос отображается только в том случае, если есть что мигрировать. Если ни один агент не установлен или их конфигурации пусты, мастер настройки пропустит этот шаг без уведомления.
 
-#### Sources scanned
+#### Сканируемые источники
 
-| Agent | Config files (read in order, results merged) | Skills directory |
+| Агент | Конфиг-файлы (читаются по порядку, результаты объединяются) | Директория навыков |
 |---|---|---|
-| Claude Code | `~/.claude.json` (top-level `mcpServers` + per-project `projects[*].mcpServers`) | `~/.claude/skills/` |
-| OpenCode | `$OPENCODE_CONFIG`, then `~/.config/opencode/opencode.json`, `opencode.jsonc`, `config.json`, `~/.opencode.json` | `~/.config/opencode/skills/` |
+| Claude Code | `~/.claude.json` (верхний уровень `mcpServers` + проекты `projects[*].mcpServers`) | `~/.claude/skills/` |
+| OpenCode | `$OPENCODE_CONFIG`, затем `~/.config/opencode/opencode.json`, `opencode.jsonc`, `config.json`, `~/.opencode.json` | `~/.config/opencode/skills/` |
 
-For OpenCode, both the modern (`mcp` block) and legacy Go-binary (`mcpServers` block) schemas are supported. Servers with `enabled: false` are skipped.
+Для OpenCode поддерживаются как современные (блок `mcp`), так и устаревшие (блок `mcpServers`) схемы. Серверы с `enabled: false` игнорируются.
 
-#### Conflict resolution
+#### Разрешение конфликтов
 
-When the same MCP server name appears in multiple sources:
+Если одно и то же имя MCP-сервера встречается в нескольких источниках:
 
-1. **Within one agent**: earlier files win; project-level entries win over top-level (Claude Code); modern `mcp` block wins over legacy `mcpServers` (OpenCode).
-2. **Across agents**: Claude Code wins over OpenCode.
-3. **Against existing Kimchi config**: your entries in `~/.config/kimchi/harness/mcp.json` always win.
+1. **Внутри одного агента**: более ранние файлы имеют приоритет; проектные настройки выше глобальных (Claude Code); блок `mcp` выше `mcpServers` (OpenCode).
+2. **Между агентами**: Claude Code имеет приоритет над OpenCode.
+3. **Против существующей конфигурации Kimchi**: ваши записи в `~/.config/kimchi/harness/mcp.json` всегда имеют наивысший приоритет.
 
-#### "Never ask again"
+#### "Больше не спрашивать"
 
-Stored in `~/.config/kimchi/config.json` (`migrationState: "skip-forever"`). Delete that field to re-trigger the prompt. Adding support for another agent is a small change -- drop a new definition into `src/agent-discovery/agents/` and append it to the registry.
+Хранится в `~/.config/kimchi/config.json` (`migrationState: "skip-forever"`). Удалите это поле, чтобы снова вызвать запрос.
 
-## Development
+## Разработка
 
-### Prerequisites
+### Требования
 
 - Node.js 22 (LTS)
-- [Bun](https://bun.sh/) (dev server and binary compilation)
-- [corepack](https://nodejs.org/api/corepack.html) enabled (`corepack enable`)
-- pnpm (installed automatically via corepack)
+- [Bun](https://bun.sh/) (для сервера разработки и компиляции бинарных файлов)
+- [corepack](https://nodejs.org/api/corepack.html) включен (`corepack enable`)
+- pnpm (устанавливается автоматически через corepack)
 
-### Quick setup
+### Быстрая настройка
 
 ```bash
 ./scripts/dev-startup.sh
 ```
 
-This script checks and installs node, pnpm, and bun if missing, runs `pnpm install`, copies resources, and starts the harness with `pnpm run dev`.
+Этот скрипт проверяет и устанавливает node, pnpm и bun, если они отсутствуют, запускает `pnpm install`, копирует ресурсы и запускает оболочку через `pnpm run dev`.
 
-### Manual setup
+### Ручная настройка
 
 ```bash
 git clone git@github.com:getkimchi/kimchi.git
@@ -370,92 +371,92 @@ corepack enable
 pnpm install
 ```
 
-### Commands
+### Команды
 
-| Command | Description |
-|---------|-------------|
-| `pnpm run build` | Compile TypeScript to `dist/` and copy theme assets |
-| `pnpm run dev` | Run the CLI locally via Bun |
-| `pnpm run check` | Biome lint + TypeScript type check |
-| `pnpm run lint` | Biome lint only |
-| `pnpm run lint:fix` | Biome lint with auto-fix |
-| `pnpm run test` | Run tests with vitest |
-| `pnpm run test:smoke` | End-to-end smoke tests |
+| Команда | Описание |
+|---------|----------|
+| `pnpm run build` | Скомпилировать TypeScript в `dist/` и скопировать ассеты тем |
+| `pnpm run dev` | Запустить CLI локально через Bun |
+| `pnpm run check` | Линтинг Biome + проверка типов TypeScript |
+| `pnpm run lint` | Только линтинг Biome |
+| `pnpm run lint:fix` | Линтинг Biome с авто-исправлением |
+| `pnpm run test` | Запустить тесты через vitest |
+| `pnpm run test:smoke` | Сквозные (e2e) дымовые тесты |
 
-### Running locally
+### Локальный запуск
 
-Propagate resources before first run:
+Перед первым запуском скопируйте ресурсы:
 
 ```bash
 node ./scripts/copy-resources.js --dev
 ```
 
-Run the CLI directly via Bun:
+Запустите CLI напрямую через Bun:
 
 ```bash
 pnpm run dev
 ```
 
-Or build a standalone binary:
+Или соберите автономный бинарный файл:
 
 ```bash
 pnpm run build:binary
 ./dist/bin/kimchi
 ```
 
-### Project structure
+### Структура проекта
 
 ```
 src/
-  entry.ts              -- Entry point
-  cli.ts                -- CLI logic & harness initialization
-  cli-args.ts           -- Argument parsing
-  config.ts             -- Auth & config loading
-  models.ts             -- Model metadata fetching & registration
-  setup-wizard.ts       -- First-run wizard
-  commands/             -- CLI subcommands (setup, login, config, update, ...)
-  extensions/           -- Agent extensions
-    agents/             -- Subagent system (personas, manager, memory)
-    orchestration/      -- Task classification, model registry, delegation
-    ferment/            -- Ferment lifecycle tools & UI
-    mcp-adapter/        -- MCP server integration
-    permissions/        -- Tool auth flows
-    behaviours/         -- Contextual prompt behaviours
-    web-fetch/          -- Web content fetching
-    web-search/         -- Web search
+  entry.ts              -- Точка входа
+  cli.ts                -- Логика CLI и инициализация оболочки
+  cli-args.ts           -- Парсинг аргументов
+  config.ts             -- Загрузка авторизации и конфига
+  models.ts             -- Загрузка метаданных моделей и их регистрация
+  setup-wizard.ts       -- Мастер первой настройки
+  commands/             -- Подкоманды CLI (setup, login, config, update, ...)
+  extensions/           -- Расширения агента
+    agents/             -- Система субагентов (персоны, менеджер, память)
+    orchestration/      -- Классификация задач, реестр моделей, делегирование
+    ferment/            -- Инструменты и UI жизненного цикла Ferment
+    mcp-adapter/        -- Интеграция MCP-серверов
+    permissions/        -- Потоки авторизации инструментов
+    behaviours/         -- Контекстные поведения промптов
+    web-fetch/          -- Загрузка веб-контента
+    web-search/         -- Веб-поиск
     lsp/                -- Language Server Protocol
-    login/              -- OAuth flows
-    onboarding/         -- Session mode startup wizard
-  ferment/              -- Ferment state machine, event store, stats
+    login/              -- Потоки OAuth
+    onboarding/         -- Мастер запуска режима сессий
+  ferment/              -- Машина состояний Ferment, хранилище событий, статистика
   modes/
-    interactive/        -- TUI harness
-    acp/                -- JSON-RPC over stdio (IDE integration)
-    teleport/           -- Remote session multiplexing
-  agent-discovery/      -- Detection & migration of other coding agents
-  config/               -- Config loading & merging
-  auth/                 -- API key management
-  utils/                -- Shared helpers
+    interactive/        -- Интерактивная оболочка TUI
+    acp/                -- JSON-RPC через stdio (интеграция с IDE)
+    teleport/           -- Мультиплексирование удаленных сессий
+  agent-discovery/      -- Обнаружение и миграция других кодинг-агентов
+  config/               -- Загрузка и объединение конфигураций
+  auth/                 -- Управление API-ключами
+  utils/                -- Общие вспомогательные функции
 ```
 
-## Benchmarking
+## Бенчмаркинг
 
-The `benchmark/` directory contains tools for smoke-testing kimchi sessions and auditing their quality.
+Директория `benchmark/` содержит инструменты для тестирования сессий kimchi и аудита их качества.
 
-- **Manual benchmarks** (`benchmark/manual/`) -- run predefined tasks against different models and compare results. See `benchmark/manual/README.md`.
-- **Terminal-bench-2** (`benchmark/terminal-bench-2/`) -- run the [terminal-bench](https://www.harborframework.com/) suite (89 tasks) against kimchi inside Docker containers. See `benchmark/terminal-bench-2/README.md`.
-- **Session audit** (`benchmark/audit-session/`) -- audit a completed session for phase discipline, code quality, architecture, testing, model alignment, and cost efficiency. See `benchmark/audit-session/README.md`.
+- **Manual benchmarks** (`benchmark/manual/`) — запуск предопределенных задач на разных моделях и сравнение результатов. См. `benchmark/manual/README.md`.
+- **Terminal-bench-2** (`benchmark/terminal-bench-2/`) — запуск набора [terminal-bench](https://www.harborframework.com/) (89 задач) в Docker-контейнерах. См. `benchmark/terminal-bench-2/README.md`.
+- **Session audit** (`benchmark/audit-session/`) — аудит завершенной сессии на предмет соблюдения фаз, качества кода, архитектуры, тестирования и эффективности затрат. См. `benchmark/audit-session/README.md`.
 
-## Release
+## Релизы
 
-Standalone binaries are built automatically by GitHub Actions when a version tag is pushed (`v*`). Binaries are compiled with `bun build --compile` and require no runtime on the user's machine.
+Автономные бинарные файлы собираются автоматически через GitHub Actions при пуше тега версии (`v*`). Бинарные файлы компилируются с помощью `bun build --compile` и не требуют рантайма на машине пользователя.
 
-Supported platforms:
+Поддерживаемые платформы:
 
 - macOS (amd64, arm64)
 - Linux (amd64, arm64)
 
-Release assets follow the naming convention `kimchi_{os}_{arch}.tar.gz` with a `checksums.txt` (SHA256) for verification.
+Ассеты релиза именуются по шаблону `kimchi_{os}_{arch}.tar.gz` и включают файл `checksums.txt` (SHA256) для проверки.
 
-## License
+## Лицензия
 
-[Apache License 2.0](LICENSE) -- see [CONTRIBUTING.md](CONTRIBUTING.md) for the CLA and contributor guidelines.
+[Apache License 2.0](LICENSE) — см. [CONTRIBUTING.md](CONTRIBUTING.md) для информации о CLA и правилах для контрибьюторов.
